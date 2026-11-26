@@ -1,0 +1,342 @@
+{
+  "info": {
+    "name": "IS803 · Práctica 3.1 · Exportaciones de carrito",
+    "description": "Con el worker detenido, envía las tres solicitudes asíncronas. Consulta la primera dos veces, antes y después de ejecutar el worker. Configura token como variable local de Postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "mensaje_1",
+      "value": ""
+    },
+    {
+      "key": "mensaje_2",
+      "value": ""
+    },
+    {
+      "key": "mensaje_3",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Asíncrona 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{$guid}}"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/asincrona",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"formato\": \"csv\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));",
+              "if (pm.response.code === 202) {",
+              "    const datos = pm.response.json();",
+              "    pm.collectionVariables.set('mensaje_1', datos.message_id);",
+              "    pm.test('Seguimiento disponible', () => {",
+              "        pm.expect(datos.estado).to.eql('pendiente');",
+              "        pm.expect(pm.response.headers.get('X-Correlation-ID')).to.eql(datos.correlation_id);",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Asíncrona 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{$guid}}"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/asincrona",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"formato\": \"csv\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));",
+              "if (pm.response.code === 202) {",
+              "    const datos = pm.response.json();",
+              "    pm.collectionVariables.set('mensaje_2', datos.message_id);",
+              "    pm.test('Seguimiento disponible', () => {",
+              "        pm.expect(datos.estado).to.eql('pendiente');",
+              "        pm.expect(pm.response.headers.get('X-Correlation-ID')).to.eql(datos.correlation_id);",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Asíncrona 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{$guid}}"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/asincrona",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"formato\": \"csv\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202', () => pm.response.to.have.status(202));",
+              "if (pm.response.code === 202) {",
+              "    const datos = pm.response.json();",
+              "    pm.collectionVariables.set('mensaje_3', datos.message_id);",
+              "    pm.test('Seguimiento disponible', () => {",
+              "        pm.expect(datos.estado).to.eql('pendiente');",
+              "        pm.expect(pm.response.headers.get('X-Correlation-ID')).to.eql(datos.correlation_id);",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar primera exportación",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/{{mensaje_1}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rechazar solicitud incompleta",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{$guid}}"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/asincrona",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exportación síncrona",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{$guid}}"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/sincrona",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"formato\": \"csv\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar segunda exportación",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/{{mensaje_2}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar tercera exportación",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/carrito/exportaciones/{{mensaje_3}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
